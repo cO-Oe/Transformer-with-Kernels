@@ -1,4 +1,4 @@
-# Transformers with Kernels
+# When Transformer meets Kernel
 
 Kernel implemented extension of [Attention, Learn to Solve Routing Problems! (ICLR 2019)](https://openreview.net/forum?id=ByxBFsRqYm)
 
@@ -8,7 +8,7 @@ Example plot from Kool
 ![TSP100](images/tsp.gif)
 
 ## Paper
-For more details, please see our paper [Kernels with Transformers (link currently under progress)]() 
+For more details, please see our paper [When Transformer meets Kernel (link currently under progress)]() 
 
 ## Dependencies
 
