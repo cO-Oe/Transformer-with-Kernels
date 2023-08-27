@@ -2,10 +2,11 @@
 
 Kernel implemented extension of [Attention, Learn to Solve Routing Problems! (ICLR 2019)](https://openreview.net/forum?id=ByxBFsRqYm)
 
+We propose using kernel method to extract more meaningful features. We experimented with the Attention Model (AM), a version of the Transformer architecture, and modified it to enhance its performance with fewer parameters
+
 We extended [Kool's work](https://github.com/wouterkool/attention-learn-to-route) with Kernels mechaniques integrated into the attention-based model on Traveling Salesman Problem (TSP) and compared the results on [TSPLIB95](https://pypi.org/project/tsplib95/) library over 69 tours
 
-Example plot from Kool
-![TSP100](images/tsp.gif)
+The Kernel method is implemented in [nets/compatability_layer.py](nets/compatability_layer.py), with Compatability and the parent class and different kernel methods as child class, including: Cauchy kernel, RBF kernel, Scaled-dot product kernel, and Polynomial Kernel. We mainly discuss Cauchy kernel in our paper as it has the best performance amongst other kernels. For detailed implementation please kindly refer to the code.
 
 ## Paper
 For more details, please see our paper [When Transformer meets Kernel (link currently under progress)]() 
@@ -27,17 +28,18 @@ Please check environment_server.yml for detailed environment setup
 
 There are several directories in this repo:
 
+* [/]() the root directory contains the main driver programs for training and evaluations, please check [below](#quick-start) for more informations
 * [nets/](nets) contains the implementation of attention-model (from [Kool's work](https://github.com/wouterkool/attention-learn-to-route)) and the [compatability layer](nets/compatability_layer.py) (our work) for kernel methods
 * [pretrained/](pretrained) contains the pretrained model from [Kool's](https://github.com/wouterkool/attention-learn-to-route/tree/master/pretrained) and the [our Cauchy-kernel model](pretrained/cauchy_tsp_100)
-* [TSPLIB/](TSPLIB) contains the tsp problems from tsplib95 library
-
+* [TSPLIB/](TSPLIB) contains the tsp problems from tsplib95 library for our testing and result comparisons
+* [problems/](problems) contains the tsp problems generated randomly from [generate_data.py](generate_data.py)
 
 
 ## Quick start
 
-For training TSP instances with 100 nodes and using rollout as REINFORCE baseline:
+For training TSP instances with 100 nodes and using Cauchy kernel and rollout as REINFORCE baseline:
 ```bash
-python run.py --graph_size 100 --baseline rollout --run_name 'tsp100_rollout'
+python run.py --graph_size 100 --baseline rollout --kernel cauchy --run_name 'tsp100_rollout'
 ```
 
 ## Usage
@@ -55,6 +57,10 @@ python generate_data.py --problem all --name test --seed 1234
 For training TSP instances with 100 nodes and using rollout as REINFORCE baseline and using the generated validation set:
 ```bash
 python run.py --graph_size 100 --baseline rollout --run_name 'tsp100_rollout' --val_dataset data/tsp/tsp100_validation_seed4321.pkl
+```
+With Cauchy kernel, for example
+```bash
+python run.py --graph_size 100 --baseline rollout --kernel cauchy --run_name 'tsp100_rollout' --val_dataset data/tsp/tsp100_validation_seed4321.pkl
 ```
 
 #### Multiple GPUs
@@ -90,21 +96,14 @@ To report the best of 1280 sampled solutions, use
 ```bash
 python eval.py data/tsp/tsp100_test_seed1234.pkl --model pretrained/tsp_100 --decode_strategy sample --width 1280 --eval_batch_size 1
 ```
-Beam Search (not in the paper) is also recently added and can be used using `--decode_strategy bs --width {beam_size}`.
-
-#### To run baselines
-Baselines for different problems are within the corresponding folders and can be ran (on multiple datasets at once) as follows
-```bash
-python -m problems.tsp.tsp_baseline farthest_insertion data/tsp/tsp20_test_seed1234.pkl data/tsp/tsp50_test_seed1234.pkl data/tsp/tsp100_test_seed1234.pkl
-```
-To run baselines, you need to install [Compass](https://github.com/bcamath-ds/compass) by running the `install_compass.sh` script from within the `problems/op` directory and [Concorde](http://www.math.uwaterloo.ca/tsp/concorde.html) using the `install_concorde.sh` script from within `problems/tsp`. [LKH3](http://akira.ruc.dk/~keld/research/LKH-3/) should be automatically downloaded and installed when required. To use [Gurobi](http://www.gurobi.com), obtain a ([free academic](http://www.gurobi.com/registration/academic-license-reg)) license and follow the [installation instructions](https://www.gurobi.com/documentation/8.1/quickstart_windows/installing_the_anaconda_py.html).
 
 ### Generate Result
 
-For generating results of running TSPLIB problems
+For generating results to csv file of running TSPLIB problems
 ```bash
 python tsplib_run.py
 ```
+The output will be generated as tsp_output.csv in your local root directory
 
 ### Other options and help
 ```bash
