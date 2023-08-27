@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from torch import nn
 import math
-
+from nets.compatibility_layer import compatibility_factory
 
 class SkipConnection(nn.Module):
 
@@ -37,6 +37,7 @@ class MultiHeadAttention(nn.Module):
         self.key_dim = key_dim
 
         self.norm_factor = 1 / math.sqrt(key_dim)  # See Attention is all you need
+        self.compatibility_elayer = compatibility_factory(n_heads, embed_dim, 'encoder')
 
         self.W_query = nn.Parameter(torch.Tensor(n_heads, input_dim, key_dim))
         self.W_key = nn.Parameter(torch.Tensor(n_heads, input_dim, key_dim))
@@ -85,7 +86,8 @@ class MultiHeadAttention(nn.Module):
         V = torch.matmul(hflat, self.W_val).view(shp)
 
         # Calculate compatibility (n_heads, batch_size, n_query, graph_size)
-        compatibility = self.norm_factor * torch.matmul(Q, K.transpose(2, 3))
+        #compatibility = self.norm_factor * torch.matmul(Q, K.transpose(2, 3))
+        compatibility = self.compatibility_elayer.normalize_compatibility(self.compatibility_elayer(Q, K))
 
         # Optionally apply mask to prevent attention
         if mask is not None:

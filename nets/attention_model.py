@@ -9,7 +9,7 @@ from nets.graph_encoder import GraphAttentionEncoder
 from torch.nn import DataParallel
 from utils.beam_search import CachedLookup
 from utils.functions import sample_many
-
+from nets.compatibility_layer import compatibility_factory
 
 def set_decode_type(model, decode_type):
     if isinstance(model, DataParallel):
@@ -115,6 +115,7 @@ class AttentionModel(nn.Module):
         assert embedding_dim % n_heads == 0
         # Note n_heads * val_dim == embedding_dim so input to project_out is embedding_dim
         self.project_out = nn.Linear(embedding_dim, embedding_dim, bias=False)
+        self.compatibility_dlayer = compatibility_factory(n_heads, embedding_dim, 'decoder')
 
     def set_decode_type(self, decode_type, temp=None):
         self.decode_type = decode_type
@@ -457,7 +458,9 @@ class AttentionModel(nn.Module):
         glimpse_Q = query.view(batch_size, num_steps, self.n_heads, 1, key_size).permute(2, 0, 1, 3, 4)
 
         # Batch matrix multiplication to compute compatibilities (n_heads, batch_size, num_steps, graph_size)
-        compatibility = torch.matmul(glimpse_Q, glimpse_K.transpose(-2, -1)) / math.sqrt(glimpse_Q.size(-1))
+        #compatibility = torch.matmul(glimpse_Q, glimpse_K.transpose(-2, -1)) / math.sqrt(glimpse_Q.size(-1))
+        compatibility = self.compatibility_dlayer.normalize_compatibility(self.compatibility_dlayer(glimpse_Q, glimpse_K))
+        
         if self.mask_inner:
             assert self.mask_logits, "Cannot mask inner without masking logits"
             compatibility[mask[None, :, :, None, :].expand_as(compatibility)] = -math.inf
@@ -474,7 +477,8 @@ class AttentionModel(nn.Module):
         final_Q = glimpse
         # Batch matrix multiplication to compute logits (batch_size, num_steps, graph_size)
         # logits = 'compatibility'
-        logits = torch.matmul(final_Q, logit_K.transpose(-2, -1)).squeeze(-2) / math.sqrt(final_Q.size(-1))
+        # logits = torch.matmul(final_Q, logit_K.transpose(-2, -1)).squeeze(-2) / math.sqrt(final_Q.size(-1))
+        logits = self.compatibility_dlayer.normalize_compatibility(self.compatibility_dlayer(final_Q, logit_K), a=-3, b=3).squeeze(-2) 
 
         # From the logits compute the probabilities by clipping, masking and softmax
         if self.tanh_clipping > 0:
