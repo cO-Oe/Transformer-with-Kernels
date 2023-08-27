@@ -2,7 +2,7 @@
 
 Kernel implemented extension of [Attention, Learn to Solve Routing Problems! (ICLR 2019)](https://openreview.net/forum?id=ByxBFsRqYm)
 
-We extended [Kool's work](https://github.com/wouterkool/attention-learn-to-route) with Kernels mechaniques integrated into the attention-based model on Traveling Salesman Problem (TSP) and compared the results on [TSPLIB95](https://pypi.org/project/tsplib95/) library over 59 tours
+We extended [Kool's work](https://github.com/wouterkool/attention-learn-to-route) with Kernels mechaniques integrated into the attention-based model on Traveling Salesman Problem (TSP) and compared the results on [TSPLIB95](https://pypi.org/project/tsplib95/) library over 69 tours
 
 Example plot from Kool
 ![TSP100](images/tsp.gif)
