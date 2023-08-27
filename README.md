@@ -6,7 +6,7 @@ We propose using kernel method to extract more meaningful features. We experimen
 
 We extended [Kool's work](https://github.com/wouterkool/attention-learn-to-route) with Kernels mechaniques integrated into the attention-based model on Traveling Salesman Problem (TSP) and compared the results on [TSPLIB95](https://pypi.org/project/tsplib95/) library over 69 tours
 
-The Kernel method is implemented in [nets/compatability_layer.py](nets/compatability_layer.py), with Compatability and the parent class and different kernel methods as child class, including: Cauchy kernel, RBF kernel, Scaled-dot product kernel, and Polynomial Kernel. We mainly discuss Cauchy kernel in our paper as it has the best performance amongst other kernels. For detailed implementation please kindly refer to the code.
+The Kernel method is implemented in [nets/compatibility_layer.py](nets/compatibility_layer.py), with Compatibility and the parent class and different kernel methods as child class, including: Cauchy kernel, RBF kernel, Scaled-dot product kernel, and Polynomial Kernel. We mainly discuss Cauchy kernel in our paper as it has the best performance amongst other kernels. For detailed implementation please kindly refer to the code.
 
 ## Paper
 For more details, please see our paper [When Transformer meets Kernel (link currently under progress)]() 
@@ -29,7 +29,7 @@ Please check environment_server.yml for detailed environment setup
 There are several directories in this repo:
 
 * [/]() the root directory contains the main driver programs for training and evaluations, please check [below](#quick-start) for more informations
-* [nets/](nets) contains the implementation of attention-model (from [Kool's work](https://github.com/wouterkool/attention-learn-to-route)) and the [compatability layer](nets/compatability_layer.py) (our work) for kernel methods
+* [nets/](nets) contains the implementation of attention-model (from [Kool's work](https://github.com/wouterkool/attention-learn-to-route)) and the [compatibility layer](nets/compatibility_layer.py) (our work) for kernel methods
 * [pretrained/](pretrained) contains the pretrained model from [Kool's](https://github.com/wouterkool/attention-learn-to-route/tree/master/pretrained) and the [our Cauchy-kernel model](pretrained/cauchy_tsp_100)
 * [TSPLIB/](TSPLIB) contains the tsp problems from tsplib95 library for our testing and result comparisons
 * [problems/](problems) contains the tsp problems generated randomly from [generate_data.py](generate_data.py)
