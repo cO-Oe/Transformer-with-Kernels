@@ -39,7 +39,7 @@ There are several directories in this repo:
 
 For training TSP instances with 100 nodes and using Cauchy kernel and rollout as REINFORCE baseline:
 ```bash
-python run.py --graph_size 100 --baseline rollout --kernel cauchy --run_name 'tsp100_rollout'
+python run.py --graph_size 100 --baseline rollout --run_name 'tsp100_rollout'
 ```
 
 ## Usage
@@ -57,10 +57,6 @@ python generate_data.py --problem all --name test --seed 1234
 For training TSP instances with 100 nodes and using rollout as REINFORCE baseline and using the generated validation set:
 ```bash
 python run.py --graph_size 100 --baseline rollout --run_name 'tsp100_rollout' --val_dataset data/tsp/tsp100_validation_seed4321.pkl
-```
-With Cauchy kernel, for example
-```bash
-python run.py --graph_size 100 --baseline rollout --kernel cauchy --run_name 'tsp100_rollout' --val_dataset data/tsp/tsp100_validation_seed4321.pkl
 ```
 
 #### Multiple GPUs
