@@ -6,6 +6,7 @@ from typing import NamedTuple
 from utils.tensor_functions import compute_in_batches
 
 from nets.graph_encoder import GraphAttentionEncoder
+from nets.graph_ret_encoder import GraphRetentionEncoder
 from torch.nn import DataParallel
 from utils.beam_search import CachedLookup
 from utils.functions import sample_many
@@ -101,7 +102,14 @@ class AttentionModel(nn.Module):
 
         self.init_embed = nn.Linear(node_dim, embedding_dim)
 
-        self.embedder = GraphAttentionEncoder(
+        # self.embedder = GraphAttentionEncoder(
+        #     n_heads=n_heads,
+        #     embed_dim=embedding_dim,
+        #     n_layers=self.n_encode_layers,
+        #     normalization=normalization
+        # )
+
+        self.embedder = GraphRetentionEncoder(
             n_heads=n_heads,
             embed_dim=embedding_dim,
             n_layers=self.n_encode_layers,
